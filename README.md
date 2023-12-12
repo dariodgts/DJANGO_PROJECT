@@ -6,4 +6,4 @@
 
 3ro cuando se compile el programa accesar al servidor desde la direccion ip:  http://127.0.0.1/admin
 
-4to intruce tu usuario y contraseña que introduciste por consola cuando creaste el superuser 
+4to introduce tu usuario y contraseña que creaste por consola, cuando creaste el superuser 
