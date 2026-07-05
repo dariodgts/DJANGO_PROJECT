@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlegraFlow - E-commerce & SaaS Project Manager</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(17, 24, 39, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --sidebar-width: 260px;
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--panel-border) transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: var(--sidebar-width);
+            background: rgba(10, 15, 26, 0.95);
+            border-right: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem 1.5rem;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2.5rem;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            color: var(--text-main);
+            background: rgba(139, 92, 246, 0.15);
+            border-left: 3px solid var(--primary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--panel-border);
+        }
+
+        .profile-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .profile-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .profile-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Main Workspace Container */
+        main {
+            flex-grow: 1;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        header {
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            backdrop-filter: blur(8px);
+        }
+
+        .view-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .content-body {
+            padding: 2.5rem 3rem;
+            flex-grow: 1;
+        }
+
+        /* Generic Panels */
+        .glass-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--glass-shadow);
+            margin-bottom: 2rem;
+        }
+
+        /* Dashboard Overview Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.4));
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .metric-card.success::before { background: var(--success); }
+        .metric-card.warning::before { background: var(--warning); }
+        .metric-card.info::before { background: var(--secondary); }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .metric-card.success .metric-icon { color: var(--success); }
+        .metric-card.warning .metric-icon { color: var(--warning); }
+        .metric-card.info .metric-icon { color: var(--secondary); }
+
+        .metric-details h4 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-details p {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        /* Charts & Columns */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Custom SVG Chart styling */
+        .chart-container {
+            height: 250px;
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        /* Tables styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge.active, .badge.paid { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .badge.pending, .badge.sent { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge.completed { background: rgba(6, 182, 212, 0.15); color: var(--secondary); }
+        .badge.cancelled, .badge.overdue { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        /* Store View - E-commerce of Projects */
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .package-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            padding: 2.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: all 0.4s ease;
+            box-shadow: var(--glass-shadow);
+            overflow: hidden;
+        }
+
+        .package-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: 0;
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .package-card:hover::after {
+            opacity: 1;
+        }
+
+        .package-header {
+            position: relative;
+            z-index: 1;
+        }
+
+        .package-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: rgba(139, 92, 246, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .package-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .package-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            height: 70px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .package-price {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .package-price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .package-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            border-top: 1px solid var(--panel-border);
+            padding-top: 1.5rem;
+            z-index: 1;
+        }
+
+        .package-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            margin-bottom: 0.8rem;
+        }
+
+        .package-features li i {
+            color: var(--success);
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.9rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .btn:hover {
+            opacity: 0.95;
+            transform: scale(1.02);
+        }
+
+        .btn.btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn.btn-outline:hover {
+            background: rgba(139, 92, 246, 0.05);
+            color: white;
+        }
+
+        /* Asana Style Kanban Board */
+        .project-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .select-input {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            outline: none;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            height: calc(100vh - 250px);
+            min-height: 500px;
+        }
+
+        .kanban-column {
+            background: rgba(17, 24, 39, 0.5);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--panel-border);
+        }
+
+        .column-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .column-count {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.1rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .task-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 1.25rem;
+            cursor: grab;
+            transition: all 0.25s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .task-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .task-priority {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-priority.high { color: var(--danger); }
+        .task-priority.medium { color: var(--warning); }
+        .task-priority.low { color: var(--success); }
+
+        .task-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .task-due {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .task-due i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Modal dialog overlays */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background: #111827;
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 550px;
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: var(--glass-shadow);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: white;
+        }
+
+        /* Forms in Modal */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        /* Invoices Detail Receipt style */
+        .invoice-receipt {
+            font-family: monospace;
+            background: #1e293b;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px dashed var(--panel-border);
+            color: #e2e8f0;
+            margin-top: 1.5rem;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 1px dashed var(--text-muted);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .receipt-divider {
+            border-bottom: 1px dashed var(--text-muted);
+            margin: 1rem 0;
+        }
+
+        /* Auth Overlays styling */
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(17, 24, 39, 0.9);
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            text-align: center;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .auth-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .auth-toggle {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .auth-toggle span {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Loader */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Menu Navigation -->
+    <aside id="sidebar" style="display: none;">
+        <div>
+            <div class="logo">
+                <i data-lucide="layers"></i>
+                <span>AlegraFlow</span>
+            </div>
+            <ul class="menu-list">
+                <li class="menu-item active" onclick="switchView('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard Finanzas</span>
+                </li>
+                <li class="menu-item" onclick="switchView('store')">
+                    <i data-lucide="shopping-bag"></i>
+                    <span>Tienda de Servicios</span>
+                </li>
+                <li class="menu-item" onclick="switchView('projects')">
+                    <i data-lucide="kanban-square"></i>
+                    <span>Tableros Proyectos</span>
+                </li>
+                <li class="menu-item" onclick="switchView('invoices')">
+                    <i data-lucide="file-text"></i>
+                    <span>Facturas Alegra</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="profile-section">
+            <div class="profile-avatar" id="user-avatar">U</div>
+            <div class="profile-info">
+                <div class="profile-name" id="user-name">Usuario</div>
+                <div class="profile-role" id="user-role">Cliente</div>
+            </div>
+            <button class="logout-btn" onclick="logoutUser()" title="Cerrar sesión">
+                <i data-lucide="log-out"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main id="main-content" style="display: none;">
+        <header>
+            <div class="view-title" id="view-title">Dashboard Finanzas</div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span class="badge completed" id="admin-badge" style="display: none;">ADMINISTRADOR</span>
+                <button class="btn btn-outline" id="btn-admin-panel" style="display: none;" onclick="window.open('/admin', '_blank')">Django Admin</button>
+            </div>
+        </header>
+
+        <div class="content-body" id="content-body">
+            <!-- Content will be rendered dynamically via JS based on current tab -->
+        </div>
+    </main>
+
+    <!-- Full-screen Auth Overlay (Login/Register) -->
+    <div id="auth-overlay" class="modal-overlay active" style="background: var(--bg-color);">
+        <div class="auth-container">
+            <div class="auth-logo">
+                <i data-lucide="layers"></i>
+                <span>AlegraFlow</span>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-form-panel">
+                <h3 style="margin-bottom: 1.5rem;">Bienvenido de nuevo</h3>
+                <div class="form-group" style="text-align: left;">
+                    <label>Usuario</label>
+                    <input type="text" id="login-username" class="form-control" placeholder="Ingresa tu usuario">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••">
+                </div>
+                <div id="login-error" style="color: var(--danger); font-size: 0.9rem; margin-bottom: 1.5rem;"></div>
+                <button class="btn" style="width: 100%;" onclick="submitLogin()">Iniciar Sesión</button>
+                <div class="auth-toggle">
+                    ¿No tienes una cuenta? <span onclick="toggleAuthPanel('register')">Regístrate</span>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form-panel" style="display: none;">
+                <h3 style="margin-bottom: 1.5rem;">Crea una cuenta</h3>
+                <div class="form-group" style="text-align: left;">
+                    <label>Usuario</label>
+                    <input type="text" id="register-username" class="form-control" placeholder="Elige un usuario">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Email</label>
+                    <input type="email" id="register-email" class="form-control" placeholder="ejemplo@correo.com">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Contraseña</label>
+                    <input type="password" id="register-password" class="form-control" placeholder="Mínimo 8 caracteres">
+                </div>
+                <div id="register-error" style="color: var(--danger); font-size: 0.9rem; margin-bottom: 1.5rem;"></div>
+                <button class="btn" style="width: 100%;" onclick="submitRegister()">Registrarse</button>
+                <div class="auth-toggle">
+                    ¿Ya tienes una cuenta? <span onclick="toggleAuthPanel('login')">Inicia sesión</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Universal Modal dialog -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-container" id="modal-container">
+            <!-- Dynamic Modal Content -->
+        </div>
+    </div>
+
+    <script>
+        // Global App State
+        let currentUser = null;
+        let activeTab = 'dashboard';
+        let storePackages = [];
+        let userProjects = [];
+        let selectedProjectId = null;
+        let dragTaskCardId = null;
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+        });
+
+        async function checkAuthStatus() {
+            try {
+                const res = await fetch('/api/auth/user-info/');
+                const data = await res.json();
+                if (data.authenticated) {
+                    currentUser = data.user;
+                    setupAuthenticatedUI();
+                } else {
+                    showAuthOverlay();
+                }
+            } catch (err) {
+                console.error("Auth check failed:", err);
+                showAuthOverlay();
+            }
+        }
+
+        function showAuthOverlay() {
+            document.getElementById('auth-overlay').classList.add('active');
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('main-content').style.display = 'none';
+        }
+
+        function setupAuthenticatedUI() {
+            document.getElementById('auth-overlay').classList.remove('active');
+            document.getElementById('sidebar').style.display = 'flex';
+            document.getElementById('main-content').style.display = 'flex';
+
+            // User Info
+            document.getElementById('user-name').innerText = currentUser.username;
+            document.getElementById('user-avatar').innerText = currentUser.username.substring(0, 2).toUpperCase();
+            document.getElementById('user-role').innerText = currentUser.is_staff ? 'Administrador' : 'Cliente';
+            
+            if (currentUser.is_staff) {
+                document.getElementById('admin-badge').style.display = 'block';
+                document.getElementById('btn-admin-panel').style.display = 'block';
+            }
+
+            // Load view
+            switchView(activeTab);
+            lucide.createIcons();
+        }
+
+        function toggleAuthPanel(panel) {
+            if (panel === 'register') {
+                document.getElementById('login-form-panel').style.display = 'none';
+                document.getElementById('register-form-panel').style.display = 'block';
+            } else {
+                document.getElementById('login-form-panel').style.display = 'block';
+                document.getElementById('register-form-panel').style.display = 'none';
+            }
+        }
+
+        async function submitLogin() {
+            const u = document.getElementById('login-username').value;
+            const p = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.innerText = '';
+
+            try {
+                const res = await fetch('/api/auth/login/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    currentUser = data.user;
+                    setupAuthenticatedUI();
+                } else {
+                    errorDiv.innerText = data.error || 'Fallo de autenticación';
+                }
+            } catch (err) {
+                errorDiv.innerText = 'Error en el servidor';
+            }
+        }
+
+        async function submitRegister() {
+            const u = document.getElementById('register-username').value;
+            const e = document.getElementById('register-email').value;
+            const p = document.getElementById('register-password').value;
+            const errorDiv = document.getElementById('register-error');
+            errorDiv.innerText = '';
+
+            try {
+                const res = await fetch('/api/auth/register/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, email: e, password: p })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    currentUser = data.user;
+                    setupAuthenticatedUI();
+                } else {
+                    errorDiv.innerText = data.error || 'Fallo al registrar usuario';
+                }
+            } catch (err) {
+                errorDiv.innerText = 'Error en el servidor';
+            }
+        }
+
+        async function logoutUser() {
+            await fetch('/api/auth/logout/');
+            currentUser = null;
+            showAuthOverlay();
+        }
+
+        // Switch active tab view
+        function switchView(tab) {
+            activeTab = tab;
+            
+            // Update active menu class
+            const items = document.querySelectorAll('.menu-item');
+            items.forEach(item => item.classList.remove('active'));
+            
+            const titles = {
+                'dashboard': 'Dashboard Finanzas (Alegra style)',
+                'store': 'Tienda de Servicios (E-commerce)',
+                'projects': 'Tableros de Operaciones (Asana style)',
+                'invoices': 'Facturación y Cobros (Alegra style)'
+            };
+
+            document.getElementById('view-title').innerText = titles[tab];
+            
+            // Find active menu item link and add active class
+            let targetIdx = 0;
+            if (tab === 'store') targetIdx = 1;
+            if (tab === 'projects') targetIdx = 2;
+            if (tab === 'invoices') targetIdx = 3;
+            items[targetIdx].classList.add('active');
+
+            const body = document.getElementById('content-body');
+            body.innerHTML = '<div class="spinner"></div>';
+
+            if (tab === 'dashboard') renderDashboardView();
+            if (tab === 'store') renderStoreView();
+            if (tab === 'projects') renderProjectsView();
+            if (tab === 'invoices') renderInvoicesView();
+        }
+
+        // --- DASHBOARD VIEW ---
+        async function renderDashboardView() {
+            try {
+                const res = await fetch('/api/dashboard/stats/');
+                const data = await res.json();
+                
+                const body = document.getElementById('content-body');
+                
+                // SVG Chart calculations
+                const maxVal = Math.max(...data.chart_data.map(d => d.revenue), 1000);
+                const chartHeight = 180;
+                const points = data.chart_data.map((d, idx) => {
+                    const x = 50 + (idx * 90);
+                    const y = 200 - (d.revenue / maxVal * chartHeight);
+                    return `${x},${y}`;
+                }).join(' ');
+
+                const barWidth = 40;
+                let barsSvg = '';
+                data.chart_data.forEach((d, idx) => {
+                    const x = 40 + (idx * 90);
+                    const barHeight = (d.revenue / maxVal * chartHeight);
+                    const y = 200 - barHeight;
+                    barsSvg += `
+                        <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="url(#grad)" rx="4"/>
+                        <text x="${x + barWidth/2}" y="215" fill="var(--text-muted)" font-size="12" text-anchor="middle">${d.month}</text>
+                        <text x="${x + barWidth/2}" y="${y - 8}" fill="white" font-size="11" font-weight="bold" text-anchor="middle">$${Math.round(d.revenue)}</text>
+                    `;
+                });
+
+                body.innerHTML = `
+                    <div class="metrics-grid">
+                        <div class="metric-card success">
+                            <div class="metric-icon"><i data-lucide="dollar-sign"></i></div>
+                            <div class="metric-details">
+                                <h4>Ventas Cobradas</h4>
+                                <p>$${data.financials.total_sales.toLocaleString('es-ES', {minimumFractionDigits: 2})}</p>
+                            </div>
+                        </div>
+                        <div class="metric-card warning">
+                            <div class="metric-icon"><i data-lucide="receipt"></i></div>
+                            <div class="metric-details">
+                                <h4>Cuentas por Cobrar</h4>
+                                <p>$${data.financials.receivables.toLocaleString('es-ES', {minimumFractionDigits: 2})}</p>
+                            </div>
+                        </div>
+                        <div class="metric-card info">
+                            <div class="metric-icon"><i data-lucide="folder-kanban"></i></div>
+                            <div class="metric-details">
+                                <h4>Proyectos Activos</h4>
+                                <p>${data.operations.active_projects_count} / ${data.operations.projects_count}</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon"><i data-lucide="check-square"></i></div>
+                            <div class="metric-details">
+                                <h4>Tareas Finalizadas</h4>
+                                <p>${data.operations.tasks.done}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-layout">
+                        <!-- Chart Section -->
+                        <div class="glass-panel">
+                            <h3 style="font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="trending-up" style="color: var(--secondary);"></i>
+                                Flujo de Ingresos Recientes
+                            </h3>
+                            <div class="chart-container">
+                                <svg width="100%" height="100%" viewBox="0 0 600 230" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="var(--primary)"/>
+                                            <stop offset="100%" stop-color="var(--secondary)" stop-opacity="0.2"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Axes grid lines -->
+                                    <line x1="30" y1="20" x2="570" y2="20" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                                    <line x1="30" y1="110" x2="570" y2="110" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                                    <line x1="30" y1="200" x2="570" y2="200" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                                    
+                                    ${barsSvg}
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Info -->
+                        <div class="glass-panel" style="padding: 1.5rem;">
+                            <h3 style="font-weight: 700; margin-bottom: 1.25rem;">Estado de Operación</h3>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem;">
+                                        <span>Por Hacer</span>
+                                        <span style="color: var(--text-muted);">${data.operations.tasks.todo}</span>
+                                    </div>
+                                    <div style="background: rgba(255,255,255,0.05); height: 6px; border-radius: 50px; overflow: hidden;">
+                                        <div style="background: var(--text-muted); width: ${getPercentage(data.operations.tasks.todo, data.operations.tasks)}%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem;">
+                                        <span>En Progreso</span>
+                                        <span style="color: var(--warning);">${data.operations.tasks.in_progress}</span>
+                                    </div>
+                                    <div style="background: rgba(255,255,255,0.05); height: 6px; border-radius: 50px; overflow: hidden;">
+                                        <div style="background: var(--warning); width: ${getPercentage(data.operations.tasks.in_progress, data.operations.tasks)}%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem;">
+                                        <span>En Revisión</span>
+                                        <span style="color: var(--primary);">${data.operations.tasks.review}</span>
+                                    </div>
+                                    <div style="background: rgba(255,255,255,0.05); height: 6px; border-radius: 50px; overflow: hidden;">
+                                        <div style="background: var(--primary); width: ${getPercentage(data.operations.tasks.review, data.operations.tasks)}%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem;">
+                                        <span>Completado</span>
+                                        <span style="color: var(--success);">${data.operations.tasks.done}</span>
+                                    </div>
+                                    <div style="background: rgba(255,255,255,0.05); height: 6px; border-radius: 50px; overflow: hidden;">
+                                        <div style="background: var(--success); width: ${getPercentage(data.operations.tasks.done, data.operations.tasks)}%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                        <div class="glass-panel">
+                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                                <span>Facturas Recientes</span>
+                                <button class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.8rem;" onclick="switchView('invoices')">Ver todas</button>
+                            </h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Número</th>
+                                        <th>Cliente</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.recent_sales.map(s => `
+                                        <tr>
+                                            <td><strong>${s.number}</strong></td>
+                                            <td>${s.client}</td>
+                                            <td>$${s.total}</td>
+                                            <td><span class="badge ${s.status}">${s.status === 'paid' ? 'Pagada' : s.status === 'sent' ? 'Enviada' : 'Atrasada'}</span></td>
+                                        </tr>
+                                    `).join('')}
+                                    ${data.recent_sales.length === 0 ? '<tr><td colspan="4" style="text-align:center;">No hay facturas aún.</td></tr>' : ''}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="glass-panel">
+                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                                <span>Proyectos Recientes</span>
+                                <button class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.8rem;" onclick="switchView('projects')">Ir a Tableros</button>
+                            </h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Proyecto</th>
+                                        <th>Progreso</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.recent_projects.map(p => `
+                                        <tr>
+                                            <td><strong>${p.title}</strong></td>
+                                            <td>
+                                                <div style="display:flex; align-items:center; gap:0.5rem;">
+                                                    <span style="font-size:0.8rem; min-width:30px;">${p.progress}%</span>
+                                                    <div style="background:rgba(255,255,255,0.05); width:80px; height:5px; border-radius:50px; overflow:hidden;">
+                                                        <div style="background:var(--secondary); width:${p.progress}%; height:100%;"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge ${p.status}">${p.status === 'active' ? 'Activo' : 'Pendiente'}</span></td>
+                                        </tr>
+                                    `).join('')}
+                                    ${data.recent_projects.length === 0 ? '<tr><td colspan="3" style="text-align:center;">No hay proyectos aún. Adquiere un servicio en la Tienda.</td></tr>' : ''}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('content-body').innerHTML = '<div style="color:var(--danger)">Fallo al cargar datos del Dashboard.</div>';
+            }
+        }
+
+        function getPercentage(val, obj) {
+            const sum = Object.values(obj).reduce((a, b) => a + b, 0);
+            if (sum === 0) return 0;
+            return (val / sum) * 100;
+        }
+
+        // --- STORE VIEW ---
+        async function renderStoreView() {
+            try {
+                const res = await fetch('/api/packages/');
+                const data = await res.json();
+                storePackages = data.packages;
+
+                const body = document.getElementById('content-body');
+                
+                body.innerHTML = `
+                    <div style="margin-bottom: 2rem;">
+                        <h2 style="font-weight:700; margin-bottom:0.5rem;">Aprovisiona y Arranca Proyectos Automáticamente</h2>
+                        <p style="color:var(--text-muted);">Elige el plan que necesitas. Al contratarlo, se creará automáticamente un tablero Kanban de tareas personalizado (estilo Asana) y se generará una factura administrativa detallada (estilo Alegra).</p>
+                    </div>
+
+                    <div class="packages-grid">
+                        ${storePackages.map(p => `
+                            <div class="package-card">
+                                <div class="package-header">
+                                    <div class="package-icon">
+                                        <i data-lucide="${p.icon || 'box'}"></i>
+                                    </div>
+                                    <div class="package-title">${p.name}</div>
+                                    <div class="package-desc">${p.description}</div>
+                                    <div class="package-price">$${p.price.toLocaleString('es-ES')} <span>USD</span></div>
+                                </div>
+                                
+                                <ul class="package-features">
+                                    <li style="font-weight: 600; color: var(--secondary); margin-bottom: 1rem;">
+                                        <i data-lucide="clock" style="color: var(--secondary);"></i> Tiempo de entrega: ${p.delivery_days} días
+                                    </li>
+                                    ${p.features.map(f => `
+                                        <li><i data-lucide="check"></i> ${f}</li>
+                                    `).join('')}
+                                </ul>
+
+                                <button class="btn" style="width: 100%;" onclick="openCheckoutModal(${p.id})">
+                                    <i data-lucide="shopping-cart"></i>
+                                    Contratar Servicio
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('content-body').innerHTML = '<div style="color:var(--danger)">Error al cargar paquetes de la tienda.</div>';
+            }
+        }
+
+        // --- CHECKOUT MODAL ---
+        function openCheckoutModal(packageId) {
+            const p = storePackages.find(item => item.id === packageId);
+            if (!p) return;
+
+            const modalOverlay = document.getElementById('modal-overlay');
+            const container = document.getElementById('modal-container');
+
+            const price = p.price;
+            const tax = price * 0.19; // 19% IVA (Alegra style)
+            const total = price + tax;
+
+            container.innerHTML = `
+                <div class="modal-header">
+                    <h2 style="font-weight:700;">Confirmación de Pedido</h2>
+                    <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Estás contratando el siguiente servicio. Se iniciará inmediatamente un proyecto Kanban:</p>
+                    <div style="background: rgba(255,255,255,0.03); border:1px solid var(--panel-border); border-radius:12px; padding:1.25rem; margin-top:1rem; display:flex; align-items:center; gap:1rem;">
+                        <i data-lucide="${p.icon}" style="color:var(--primary); width:32px; height:32px;"></i>
+                        <div>
+                            <strong style="font-size:1.1rem; display:block;">${p.name}</strong>
+                            <span style="color:var(--text-muted); font-size:0.85rem;">Entrega estimada: ${p.delivery_days} días</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="invoice-receipt">
+                    <div class="receipt-header">
+                        <strong>ALEGRAFLOW FACTURA MOCK</strong><br>
+                        <span>Comprobante de Cotización Directa</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Item: ${p.name.substring(0, 25)}...</span>
+                        <span>$${price.toFixed(2)}</span>
+                    </div>
+                    <div class="receipt-divider"></div>
+                    <div class="receipt-row">
+                        <span>Subtotal</span>
+                        <span>$${price.toFixed(2)}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span>IVA (19.00%)</span>
+                        <span>$${tax.toFixed(2)}</span>
+                    </div>
+                    <div class="receipt-divider"></div>
+                    <div class="receipt-row" style="font-size: 1.15rem; font-weight: bold; color: white;">
+                        <span>Total</span>
+                        <span>$${total.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; display:flex; gap:1rem;">
+                    <button class="btn btn-outline" style="flex:1;" onclick="closeModal()">Cancelar</button>
+                    <button class="btn" style="flex:2;" onclick="processCheckout(${p.id})">Confirmar y Comprar</button>
+                </div>
+            `;
+
+            modalOverlay.classList.add('active');
+            lucide.createIcons();
+        }
+
+        async function processCheckout(packageId) {
+            const container = document.getElementById('modal-container');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 3rem 0;">
+                    <div class="spinner"></div>
+                    <h3>Procesando Transacción...</h3>
+                    <p style="color: var(--text-muted); margin-top:0.5rem;">Estamos aprovisionando la base de datos del proyecto y configurando el tablero de tareas...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch('/api/checkout/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ package_id: packageId })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div style="width:70px; height:70px; border-radius:50%; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center; color:var(--success); margin: 0 auto 1.5rem auto;">
+                                <i data-lucide="check-circle" style="width:40px; height:40px;"></i>
+                            </div>
+                            <h2 style="font-weight:700;">¡Servicio Contratado!</h2>
+                            <p style="color:var(--text-muted); margin: 0.5rem 0 2rem 0;">Se creó con éxito la Factura <strong>${data.invoice_number}</strong> y se habilitó tu tablero en Asana.</p>
+                            
+                            <div style="display:flex; gap:1rem; justify-content:center;">
+                                <button class="btn btn-outline" onclick="closeModal(); switchView('invoices');">Ver Factura</button>
+                                <button class="btn" onclick="closeModal(); loadProjectBoard(${data.project_id});">Ver Tablero</button>
+                            </div>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                } else {
+                    alert("Error en el checkout: " + data.error);
+                    closeModal();
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión");
+                closeModal();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        // --- PROJECTS / KANBAN BOARD VIEW (ASANA STYLE) ---
+        async function renderProjectsView() {
+            try {
+                // Fetch projects
+                const res = await fetch('/api/projects/');
+                const data = await res.json();
+                userProjects = data.projects;
+
+                const body = document.getElementById('content-body');
+                
+                if (userProjects.length === 0) {
+                    body.innerHTML = `
+                        <div class="glass-panel" style="text-align:center; padding:4rem 2rem;">
+                            <i data-lucide="folder-open" style="width:60px; height:60px; color:var(--text-muted); margin-bottom:1.5rem;"></i>
+                            <h2>No tienes tableros de proyectos activos</h2>
+                            <p style="color:var(--text-muted); margin:0.5rem 0 2rem 0;">Para ver un tablero, contrata uno de nuestros planes de servicio en la Tienda.</p>
+                            <button class="btn" style="margin:0 auto;" onclick="switchView('store')">Ir a la Tienda</button>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                    return;
+                }
+
+                // If a project is selected but not in the list, set to first project
+                if (!selectedProjectId || !userProjects.some(p => p.id === selectedProjectId)) {
+                    selectedProjectId = userProjects[0].id;
+                }
+
+                body.innerHTML = `
+                    <div class="project-selector">
+                        <label style="font-weight:600; color:var(--text-muted);">Selecciona tu Proyecto:</label>
+                        <select class="select-input" onchange="loadProjectBoard(parseInt(this.value))">
+                            ${userProjects.map(p => `
+                                <option value="${p.id}" ${p.id === selectedProjectId ? 'selected' : ''}>${p.title} (${p.progress}%)</option>
+                            `).join('')}
+                        </select>
+                        ${currentUser.is_staff ? `
+                            <button class="btn" onclick="openAddTaskModal()" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                                <i data-lucide="plus"></i> Crear Tarea
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <div class="kanban-board" id="kanban-board-container">
+                        <!-- Kanban columns loaded here -->
+                    </div>
+                `;
+
+                loadProjectDetails(selectedProjectId);
+                lucide.createIcons();
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('content-body').innerHTML = '<div style="color:var(--danger)">Error al cargar tableros.</div>';
+            }
+        }
+
+        async function loadProjectBoard(projectId) {
+            selectedProjectId = projectId;
+            activeTab = 'projects';
+            switchView('projects');
+        }
+
+        async function loadProjectDetails(projectId) {
+            const container = document.getElementById('kanban-board-container');
+            container.innerHTML = '<div class="spinner" style="grid-column: span 4;"></div>';
+
+            try {
+                const res = await fetch(`/api/projects/${projectId}/`);
+                const data = await res.json();
+                const p = data.project;
+
+                // Group tasks
+                const todo = p.tasks.filter(t => t.status === 'todo');
+                const inProgress = p.tasks.filter(t => t.status === 'in_progress');
+                const review = p.tasks.filter(t => t.status === 'review');
+                const done = p.tasks.filter(t => t.status === 'done');
+
+                container.innerHTML = `
+                    <!-- Column Todo -->
+                    <div class="kanban-column" ondragover="allowDrop(event)" ondrop="dropTask(event, 'todo')">
+                        <div class="column-header">
+                            <div class="column-title"><i data-lucide="list-todo" style="color:var(--text-muted); width:18px;"></i>Por Hacer</div>
+                            <span class="column-count">${todo.length}</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:0.75rem; flex-grow:1;">
+                            ${todo.map(t => getTaskCardHtml(t)).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Column In Progress -->
+                    <div class="kanban-column" ondragover="allowDrop(event)" ondrop="dropTask(event, 'in_progress')">
+                        <div class="column-header">
+                            <div class="column-title"><i data-lucide="play" style="color:var(--warning); width:18px;"></i>En Progreso</div>
+                            <span class="column-count">${inProgress.length}</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:0.75rem; flex-grow:1;">
+                            ${inProgress.map(t => getTaskCardHtml(t)).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Column Review -->
+                    <div class="kanban-column" ondragover="allowDrop(event)" ondrop="dropTask(event, 'review')">
+                        <div class="column-header">
+                            <div class="column-title"><i data-lucide="eye" style="color:var(--primary); width:18px;"></i>En Revisión</div>
+                            <span class="column-count">${review.length}</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:0.75rem; flex-grow:1;">
+                            ${review.map(t => getTaskCardHtml(t)).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Column Done -->
+                    <div class="kanban-column" ondragover="allowDrop(event)" ondrop="dropTask(event, 'done')">
+                        <div class="column-header">
+                            <div class="column-title"><i data-lucide="check-circle" style="color:var(--success); width:18px;"></i>Completada</div>
+                            <span class="column-count">${done.length}</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:0.75rem; flex-grow:1;">
+                            ${done.map(t => getTaskCardHtml(t)).join('')}
+                        </div>
+                    </div>
+                `;
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div style="color:var(--danger); grid-column:span 4;">Error al cargar tareas del tablero.</div>';
+            }
+        }
+
+        function getTaskCardHtml(task) {
+            return `
+                <div class="task-card" draggable="true" ondragstart="dragTask(event, ${task.id})" id="task-${task.id}" onclick="openEditTaskModal(${JSON.stringify(task).replace(/"/g, '&quot;')})">
+                    <div class="task-priority ${task.priority}">${task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}</div>
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-meta">
+                        <div class="task-due">
+                            <i data-lucide="calendar"></i>
+                            <span>${task.due_date || 'Sin fecha'}</span>
+                        </div>
+                        <span style="color:var(--primary); font-weight:600;">${task.assigned_to ? task.assigned_to.substring(0,2).toUpperCase() : '👤'}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // HTML5 Drag and Drop API handlers
+        function dragTask(event, taskId) {
+            dragTaskCardId = taskId;
+            event.dataTransfer.setData("text", taskId);
+            document.getElementById(`task-${taskId}`).classList.add('dragging');
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        async function dropTask(event, newStatus) {
+            event.preventDefault();
+            const taskId = dragTaskCardId;
+            if (!taskId) return;
+
+            // Optimistic UI updates
+            const card = document.getElementById(`task-${taskId}`);
+            if (card) card.classList.remove('dragging');
+
+            try {
+                const res = await fetch(`/api/tasks/${taskId}/update/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    loadProjectDetails(selectedProjectId);
+                } else {
+                    alert("Error al actualizar tarea: " + data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // --- TASK MODALS (ADD / EDIT) ---
+        function openAddTaskModal() {
+            const modalOverlay = document.getElementById('modal-overlay');
+            const container = document.getElementById('modal-container');
+
+            container.innerHTML = `
+                <div class="modal-header">
+                    <h2 style="font-weight:700;">Crear Nueva Tarea</h2>
+                    <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Título de la Tarea</label>
+                    <input type="text" id="add-task-title" class="form-control" placeholder="Ej. Integrar autenticación">
+                </div>
+                
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="add-task-desc" class="form-control" style="height:100px; resize:none;" placeholder="Detalles de la tarea..."></textarea>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label>Prioridad</label>
+                        <select id="add-task-priority" class="form-control" style="background:#1f2937; color:white;">
+                            <option value="low">Baja</option>
+                            <option value="medium" selected>Media</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Límite</label>
+                        <input type="date" id="add-task-due" class="form-control">
+                    </div>
+                </div>
+
+                <div style="margin-top:2rem; display:flex; gap:1rem;">
+                    <button class="btn btn-outline" style="flex:1;" onclick="closeModal()">Cancelar</button>
+                    <button class="btn" style="flex:2;" onclick="submitAddTask()">Crear Tarea</button>
+                </div>
+            `;
+
+            modalOverlay.classList.add('active');
+            lucide.createIcons();
+        }
+
+        async function submitAddTask() {
+            const title = document.getElementById('add-task-title').value;
+            const desc = document.getElementById('add-task-desc').value;
+            const priority = document.getElementById('add-task-priority').value;
+            const due = document.getElementById('add-task-due').value;
+
+            if (!title) {
+                alert("Especifica el título de la tarea.");
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/tasks/create/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_id: selectedProjectId,
+                        title: title,
+                        description: desc,
+                        priority: priority,
+                        due_date: due
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal();
+                    loadProjectDetails(selectedProjectId);
+                } else {
+                    alert("Fallo al crear la tarea: " + data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function openEditTaskModal(task) {
+            // Prevent opening edit modal if not Admin/Staff or the client
+            if (!currentUser.is_staff) {
+                // Clients can view details, but we won't show edit controls if not admin
+                openViewTaskModal(task);
+                return;
+            }
+
+            const modalOverlay = document.getElementById('modal-overlay');
+            const container = document.getElementById('modal-container');
+
+            container.innerHTML = `
+                <div class="modal-header">
+                    <h2 style="font-weight:700;">Editar Tarea</h2>
+                    <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Título de la Tarea</label>
+                    <input type="text" id="edit-task-title" class="form-control" value="${task.title}">
+                </div>
+                
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="edit-task-desc" class="form-control" style="height:100px; resize:none;">${task.description || ''}</textarea>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label>Prioridad</label>
+                        <select id="edit-task-priority" class="form-control" style="background:#1f2937; color:white;">
+                            <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Baja</option>
+                            <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Media</option>
+                            <option value="high" ${task.priority === 'high' ? 'selected' : ''}>Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Límite</label>
+                        <input type="date" id="edit-task-due" class="form-control" value="${task.due_date || ''}">
+                    </div>
+                </div>
+
+                <div style="margin-top:2rem; display:flex; gap:1rem;">
+                    <button class="btn btn-outline" style="background:rgba(239,68,68,0.1); border-color:var(--danger); color:var(--danger);" onclick="deleteTask(${task.id})">
+                        <i data-lucide="trash-2"></i> Eliminar
+                    </button>
+                    <button class="btn" style="flex:2;" onclick="submitEditTask(${task.id})">Guardar Cambios</button>
+                </div>
+            `;
+
+            modalOverlay.classList.add('active');
+            lucide.createIcons();
+        }
+
+        function openViewTaskModal(task) {
+            const modalOverlay = document.getElementById('modal-overlay');
+            const container = document.getElementById('modal-container');
+
+            container.innerHTML = `
+                <div class="modal-header">
+                    <h2 style="font-weight:700;">Detalle de Tarea</h2>
+                    <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+                </div>
+                
+                <div style="margin-bottom:1.5rem;">
+                    <span class="badge ${task.status}">${task.status === 'todo' ? 'Por Hacer' : task.status === 'in_progress' ? 'En Progreso' : task.status === 'review' ? 'En Revisión' : 'Completado'}</span>
+                    <span class="task-priority ${task.priority}" style="margin-left:1rem; font-weight:700;">Prioridad ${task.priority.toUpperCase()}</span>
+                </div>
+
+                <h3 style="font-weight:700; margin-bottom:0.75rem;">${task.title}</h3>
+                <p style="color:var(--text-muted); font-size:1rem; line-height:1.5; white-space:pre-wrap; background:rgba(255,255,255,0.02); padding:1rem; border-radius:10px; border:1px solid var(--panel-border); margin-bottom:1.5rem;">
+                    ${task.description || 'Sin descripción detallada.'}
+                </p>
+
+                <div style="display:flex; justify-content:space-between; font-size:0.9rem; color:var(--text-muted); border-top: 1px solid var(--panel-border); padding-top:1.25rem;">
+                    <span>Fecha límite: <strong>${task.due_date || 'No asignada'}</strong></span>
+                    <span>Asignado a: <strong>${task.assigned_to || 'Sin asignar'}</strong></span>
+                </div>
+            `;
+
+            modalOverlay.classList.add('active');
+            lucide.createIcons();
+        }
+
+        async function submitEditTask(taskId) {
+            const title = document.getElementById('edit-task-title').value;
+            const desc = document.getElementById('edit-task-desc').value;
+            const priority = document.getElementById('edit-task-priority').value;
+            const due = document.getElementById('edit-task-due').value;
+
+            try {
+                const res = await fetch(`/api/tasks/${taskId}/update/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        description: desc,
+                        priority: priority,
+                        due_date: due
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal();
+                    loadProjectDetails(selectedProjectId);
+                } else {
+                    alert("Error al actualizar: " + data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function deleteTask(taskId) {
+            if (!confirm("¿Seguro que deseas eliminar definitivamente esta tarea?")) return;
+
+            try {
+                const res = await fetch(`/api/tasks/${taskId}/delete/`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal();
+                    loadProjectDetails(selectedProjectId);
+                } else {
+                    alert("Error al eliminar: " + data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // --- INVOICES VIEW (ALEGRA STYLE BILLING) ---
+        async function renderInvoicesView() {
+            try {
+                const res = await fetch('/api/invoices/');
+                const data = await res.json();
+
+                const body = document.getElementById('content-body');
+                
+                body.innerHTML = `
+                    <div class="glass-panel">
+                        <h3 style="font-weight: 700; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+                            <i data-lucide="invoice" style="color:var(--primary);"></i>
+                            Listado de Facturación Emitida
+                        </h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Cliente</th>
+                                    <th>Servicio / Proyecto</th>
+                                    <th>Fecha Emisión</th>
+                                    <th>Vence</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.invoices.map(inv => `
+                                    <tr>
+                                        <td><strong>${inv.invoice_number}</strong></td>
+                                        <td>${inv.client}</td>
+                                        <td>${inv.project_title}</td>
+                                        <td>${inv.date_created}</td>
+                                        <td>${inv.due_date}</td>
+                                        <td style="font-weight:700;">$${inv.total.toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+                                        <td><span class="badge ${inv.status}">${inv.status === 'paid' ? 'Pagada' : inv.status === 'sent' ? 'Enviada' : 'Vencida'}</span></td>
+                                        <td>
+                                            <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="openInvoiceDetailModal(${JSON.stringify(inv).replace(/"/g, '&quot;')})">
+                                                Ver Detalle
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                                ${data.invoices.length === 0 ? '<tr><td colspan="8" style="text-align:center;">No hay facturas registradas en el sistema.</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('content-body').innerHTML = '<div style="color:var(--danger)">Error al cargar facturas.</div>';
+            }
+        }
+
+        // Invoice Receipt Detail modal
+        function openInvoiceDetailModal(inv) {
+            const modalOverlay = document.getElementById('modal-overlay');
+            const container = document.getElementById('modal-container');
+
+            container.innerHTML = `
+                <div class="modal-header">
+                    <h2 style="font-weight:700;">Detalle de Factura</h2>
+                    <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+                </div>
+
+                <div class="invoice-receipt" style="background:#0f172a;">
+                    <div style="text-align: center; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                        <strong style="font-size: 1.25rem; color: white;">ALEGRAFLOW SAAS</strong><br>
+                        <span style="color: var(--text-muted);">NIT: 800.123.456-9</span><br>
+                        <span style="color: var(--text-muted); font-size:0.85rem;">Factura de Venta: ${inv.invoice_number}</span>
+                    </div>
+
+                    <div style="font-size: 0.85rem; margin-bottom: 1.5rem; display:flex; flex-direction:column; gap:0.25rem;">
+                        <div><strong>Cliente:</strong> ${inv.client}</div>
+                        <div><strong>Proyecto:</strong> ${inv.project_title}</div>
+                        <div><strong>Fecha Emisión:</strong> ${inv.date_created}</div>
+                        <div><strong>Fecha Vencimiento:</strong> ${inv.due_date}</div>
+                    </div>
+
+                    <div style="border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 0.5rem; margin-bottom: 0.5rem; font-weight: bold; color:white; display:flex; justify-content:space-between;">
+                        <span>Servicio</span>
+                        <span>Total</span>
+                    </div>
+                    ${inv.items.map(item => `
+                        <div class="receipt-row" style="font-size:0.85rem;">
+                            <span>${item.description} (x${item.quantity})</span>
+                            <span>$${item.total_price.toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+
+                    <div class="receipt-divider" style="border-color: rgba(255,255,255,0.1);"></div>
+
+                    <div class="receipt-row" style="font-size:0.85rem;">
+                        <span>Subtotal</span>
+                        <span>$${inv.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="receipt-row" style="font-size:0.85rem;">
+                        <span>IVA (19.00%)</span>
+                        <span>$${inv.tax.toFixed(2)}</span>
+                    </div>
+                    <div class="receipt-divider" style="border-color: rgba(255,255,255,0.2);"></div>
+                    <div class="receipt-row" style="font-size: 1.15rem; font-weight: bold; color: white;">
+                        <span>Total a Pagar</span>
+                        <span>$${inv.total.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top:2rem; display:flex; gap:1rem;">
+                    <button class="btn btn-outline" style="flex:1;" onclick="closeModal()">Cerrar</button>
+                    ${inv.status === 'sent' ? `
+                        <button class="btn" style="flex:2;" onclick="payInvoice(${inv.id})">
+                            <i data-lucide="credit-card"></i> Pagar Factura (Simulado)
+                        </button>
+                    ` : `
+                        <button class="btn" style="flex:2; background:var(--success); pointer-events:none;">
+                            <i data-lucide="check"></i> Factura Pagada
+                        </button>
+                    `}
+                </div>
+            `;
+
+            modalOverlay.classList.add('active');
+            lucide.createIcons();
+        }
+
+        async function payInvoice(invoiceId) {
+            try {
+                const res = await fetch(`/api/invoices/${invoiceId}/pay/`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal();
+                    switchView('invoices');
+                } else {
+                    alert("Error en el pago: " + data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
